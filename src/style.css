@@ -1,0 +1,195 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Ant Design 配色 - 更浅的主题色 */
+:root {
+  --primary-color: #4096ff;
+  --primary-hover: #69b1ff;
+  --primary-active: #1677ff;
+  --success-color: #52c41a;
+  --warning-color: #faad14;
+  --error-color: #f5222d;
+  --info-color: #4096ff;
+
+  --text-primary: rgba(0, 0, 0, 0.88);
+  --text-secondary: rgba(0, 0, 0, 0.65);
+  --text-tertiary: rgba(0, 0, 0, 0.45);
+  --text-disabled: rgba(0, 0, 0, 0.25);
+
+  --bg-base: #f5f5f5;
+  --bg-container: #ffffff;
+  --bg-elevated: #ffffff;
+  --bg-hover: #f5f5f5;
+  --bg-selected: #e6f4ff;
+
+  --border-color: #d9d9d9;
+  --border-color-split: #f0f0f0;
+  --border-color-light: #e8e8e8;
+}
+
+/* 全局样式重置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    'Noto Color Emoji';
+  font-size: 14px;
+  line-height: 1.5715;
+  color: var(--text-primary);
+  background-color: var(--bg-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+/* Ant Design 按钮 */
+.ant-btn {
+  @apply px-4 py-2 rounded-md text-sm font-medium transition-all duration-200;
+  @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+  border: 1px solid transparent;
+  line-height: 1.5715;
+}
+
+.ant-btn-primary {
+  @apply bg-[#4096ff] text-white;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+  transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.ant-btn-primary:hover {
+  @apply bg-[#69b1ff];
+  box-shadow: 0 4px 8px rgba(64, 150, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.ant-btn-primary:active {
+  @apply bg-[#1677ff];
+  transform: translateY(0);
+}
+
+.ant-btn-default {
+  @apply bg-white text-gray-800;
+  border-color: #d9d9d9;
+  transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.ant-btn-default:hover {
+  @apply border-[#4096ff] text-[#4096ff];
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.ant-btn-danger {
+  @apply bg-[#f5222d] text-white;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+  transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.ant-btn-danger:hover {
+  @apply bg-[#ff4d4f];
+  box-shadow: 0 4px 8px rgba(245, 34, 45, 0.3);
+  transform: translateY(-1px);
+}
+
+.ant-btn-danger:active {
+  @apply bg-[#cf1322];
+  transform: translateY(0);
+}
+
+/* Ant Design 输入框 */
+.ant-input {
+  @apply w-full px-3 py-2 bg-white border border-[#d9d9d9] rounded-md;
+  @apply transition-all duration-200;
+  line-height: 1.5715;
+}
+
+.ant-input:hover {
+  border-color: #4096ff;
+}
+
+.ant-input:focus {
+  border-color: #4096ff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(64, 150, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Ant Design 卡片 */
+.ant-card {
+  @apply bg-white rounded-lg border border-[#f0f0f0];
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03),
+              0 1px 6px -1px rgba(0, 0, 0, 0.02),
+              0 2px 4px 0 rgba(0, 0, 0, 0.02);
+}
+
+.ant-card-hoverable {
+  @apply cursor-pointer transition-all duration-200;
+}
+
+.ant-card-hoverable:hover {
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.09),
+              0 1px 6px -1px rgba(0, 0, 0, 0.02),
+              0 4px 12px 0 rgba(0, 0, 0, 0.03);
+  transform: translateY(-1px);
+}
+
+/* 过渡动画 */
+.ant-fade-enter-active,
+.ant-fade-leave-active {
+  transition: opacity 0.2s ease-in-out;
+}
+
+.ant-fade-enter-from,
+.ant-fade-leave-to {
+  opacity: 0;
+}
+
+.ant-slide-up-enter-active,
+.ant-slide-up-leave-active {
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.ant-slide-up-enter-from,
+.ant-slide-up-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.ant-zoom-enter-active,
+.ant-zoom-leave-active {
+  transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.ant-zoom-enter-from,
+.ant-zoom-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
