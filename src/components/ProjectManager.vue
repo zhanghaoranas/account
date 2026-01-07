@@ -27,11 +27,21 @@ const currentCustomerProjects = computed(() => {
   return props.projects[props.currentCustomer] || [];
 });
 
-// 获取项目的账号数量
+// 缓存账号数量 - 使用 Map 避免每次都过滤
+const accountCountMap = computed(() => {
+  const map = new Map<string, number>();
+  props.accounts.forEach(account => {
+    if (account.customerName === props.currentCustomer) {
+      const key = account.projectName;
+      map.set(key, (map.get(key) || 0) + 1);
+    }
+  });
+  return map;
+});
+
+// 获取项目的账号数量 - 从 Map 中读取，性能 O(1)
 const getAccountCount = (project: string) => {
-  return props.accounts.filter(
-    account => account.customerName === props.currentCustomer && account.projectName === project
-  ).length;
+  return accountCountMap.value.get(project) || 0;
 };
 
 // 对话框状态
