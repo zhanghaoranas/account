@@ -210,6 +210,7 @@ onMounted(() => {
       <CustomerManager
         :customers="customers"
         :current-customer="currentCustomer"
+        :projects="projects"
         @select-customer="handleSelectCustomer"
         @add-customer="handleAddCustomer"
         @edit-customer="handleEditCustomer"
@@ -223,6 +224,7 @@ onMounted(() => {
         :current-customer="currentCustomer"
         :projects="projects"
         :current-project="currentProject"
+        :accounts="accounts"
         @select-project="handleSelectProject"
         @add-project="handleAddProject"
         @edit-project="handleEditProject"

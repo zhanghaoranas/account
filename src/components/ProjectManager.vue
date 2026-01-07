@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, defineProps, defineEmits } from 'vue';
+import type { ProjectInfo } from '../types';
 
 // 定义 props
 const props = defineProps<{
   currentCustomer: string;
   projects: Record<string, string[]>;
   currentProject: string;
+  accounts: ProjectInfo[];
 }>();
 
 // 定义事件
@@ -20,6 +22,13 @@ const emit = defineEmits<{
 const currentCustomerProjects = computed(() => {
   return props.projects[props.currentCustomer] || [];
 });
+
+// 获取项目的账号数量
+const getAccountCount = (project: string) => {
+  return props.accounts.filter(
+    account => account.customerName === props.currentCustomer && account.projectName === project
+  ).length;
+};
 
 // 对话框状态
 const projectDialogVisible = ref(false);
@@ -146,20 +155,22 @@ function resetForm() {
         :key="project"
         @click="emit('select-project', project)"
         class="group ant-card-hoverable py-2.5 px-3 cursor-pointer relative border rounded-lg transition-all duration-200"
-        :class="project === currentProject ? 'bg-gradient-to-r from-[#e6f4ff] to-[#bae0ff] border-[#4096ff] shadow-sm' : 'bg-white border-[#e8e8e8] hover:border-[#4096ff] hover:shadow-md'"
+        :class="project === currentProject ? 'bg-[#e6f4ff] border-[#4096ff] shadow-sm' : 'bg-white border-[#e8e8e8] hover:border-[#4096ff] hover:shadow-md'"
       >
-        <!-- 选中状态指示器 -->
-        <div
-          v-if="project === currentProject"
-          class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-7 bg-gradient-to-b from-[#4096ff] to-[#69b1ff] rounded-r"
-        ></div>
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-medium pl-2" :class="project === currentProject ? 'text-[#4096ff]' : 'text-gray-800'">
+            {{ project }}
+          </span>
 
-        <span class="text-sm font-medium pl-2" :class="project === currentProject ? 'text-[#4096ff]' : 'text-gray-800'">
-          {{ project }}
-        </span>
+          <!-- 账号数量徽章 -->
+          <div class="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+               :class="project === currentProject ? 'bg-[#4096ff] text-white' : 'bg-[#f0f0f0] text-gray-600'">
+            {{ getAccountCount(project) }}
+          </div>
+        </div>
 
         <!-- 操作按钮 -->
-        <div class="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
+        <div class="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity mr-8">
           <button
             @click.stop="openEditDialog(project)"
             class="p-1.5 text-gray-500 hover:text-[#4096ff] hover:bg-[#e6f4ff] rounded-md transition-all duration-200"

@@ -5,7 +5,13 @@ import { ref, defineProps, defineEmits } from 'vue';
 const props = defineProps<{
   customers: string[];
   currentCustomer: string;
+  projects: Record<string, string[]>;
 }>();
+
+// 获取客户的项目数量
+const getProjectCount = (customer: string) => {
+  return props.projects[customer]?.length || 0;
+};
 
 // 定义事件
 const emit = defineEmits<{
@@ -134,20 +140,22 @@ function resetForm() {
         :key="customer"
         @click="emit('select-customer', customer)"
         class="group ant-card-hoverable py-2.5 px-3 cursor-pointer relative border rounded-lg transition-all duration-200"
-        :class="customer === currentCustomer ? 'bg-gradient-to-r from-[#e6f4ff] to-[#bae0ff] border-[#4096ff] shadow-sm' : 'bg-white border-[#e8e8e8] hover:border-[#4096ff] hover:shadow-md'"
+        :class="customer === currentCustomer ? 'bg-[#e6f4ff] border-[#4096ff] shadow-sm' : 'bg-white border-[#e8e8e8] hover:border-[#4096ff] hover:shadow-md'"
       >
-        <!-- 选中状态指示器 -->
-        <div
-          v-if="customer === currentCustomer"
-          class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-7 bg-gradient-to-b from-[#4096ff] to-[#69b1ff] rounded-r"
-        ></div>
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-medium pl-2" :class="customer === currentCustomer ? 'text-[#4096ff]' : 'text-gray-800'">
+            {{ customer }}
+          </span>
 
-        <span class="text-sm font-medium pl-2" :class="customer === currentCustomer ? 'text-[#4096ff]' : 'text-gray-800'">
-          {{ customer }}
-        </span>
+          <!-- 项目数量徽章 -->
+          <div class="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+               :class="customer === currentCustomer ? 'bg-[#4096ff] text-white' : 'bg-[#f0f0f0] text-gray-600'">
+            {{ getProjectCount(customer) }}
+          </div>
+        </div>
 
         <!-- 操作按钮 -->
-        <div class="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
+        <div class="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity mr-8">
           <button
             @click.stop="openEditDialog(customer)"
             class="p-1.5 text-gray-500 hover:text-[#4096ff] hover:bg-[#e6f4ff] rounded-md transition-all duration-200"
