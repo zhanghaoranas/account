@@ -1,10 +1,23 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 import CustomerManager from './components/CustomerManager.vue';
 import ProjectManager from './components/ProjectManager.vue';
 import AccountManager from './components/AccountManager.vue';
 import type { ProjectInfo } from './types';
 import { loadData, saveData } from './utils/storage';
+
+// 窗口拖拽
+async function handleTitleBarMouseDown(e: MouseEvent) {
+  if (e.button !== 0) return;
+  const target = e.target as HTMLElement;
+  if (target.closest('button, a, input, [no-drag]')) return;
+  try {
+    await getCurrentWindow().startDragging();
+  } catch {
+    // 非 Tauri 环境
+  }
+}
 
 // 状态管理
 const customers = ref<string[]>([]);
@@ -168,44 +181,56 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex h-screen overflow-hidden bg-apple-light-gray">
-    <!-- 左侧客户区域 -->
-    <div class="w-72 flex-shrink-0 flex flex-col overflow-hidden bg-apple-near-black">
-      <CustomerManager
-        :customers="customers"
-        :current-customer="currentCustomer"
-        :projects="projects"
-        @select-customer="handleSelectCustomer"
-        @add-customer="handleAddCustomer"
-        @edit-customer="handleEditCustomer"
-        @delete-customer="handleDeleteCustomer"
-      />
+  <div class="flex flex-col h-screen overflow-hidden bg-apple-light-gray">
+    <!-- 自定义标题栏 -->
+    <div
+      data-tauri-drag-region
+      class="flex-shrink-0 h-[38px] bg-apple-near-black flex items-center justify-center select-none"
+      @mousedown="handleTitleBarMouseDown"
+    >
+      <span data-tauri-drag-region class="text-white/40 text-xs font-sf tracking-wide">开发账号管理</span>
     </div>
 
-    <!-- 中间项目区域 -->
-    <div class="w-72 flex-shrink-0 flex flex-col overflow-hidden bg-white">
-      <ProjectManager
-        :current-customer="currentCustomer"
-        :projects="projects"
-        :current-project="currentProject"
-        :accounts="accounts"
-        @select-project="handleSelectProject"
-        @add-project="handleAddProject"
-        @edit-project="handleEditProject"
-        @delete-project="handleDeleteProject"
-      />
-    </div>
+    <!-- 三栏内容 -->
+    <div class="flex flex-1 overflow-hidden">
+      <!-- 左侧客户区域 -->
+      <div class="w-72 flex-shrink-0 flex flex-col overflow-hidden bg-apple-near-black">
+        <CustomerManager
+          :customers="customers"
+          :current-customer="currentCustomer"
+          :projects="projects"
+          @select-customer="handleSelectCustomer"
+          @add-customer="handleAddCustomer"
+          @edit-customer="handleEditCustomer"
+          @delete-customer="handleDeleteCustomer"
+        />
+      </div>
 
-    <!-- 右侧账号区域 -->
-    <div class="flex-1 flex flex-col overflow-hidden bg-apple-light-gray">
-      <AccountManager
-        :current-customer="currentCustomer"
-        :current-project="currentProject"
-        :accounts="accounts"
-        @add-account="handleAddAccount"
-        @edit-account="handleEditAccount"
-        @delete-account="handleDeleteAccount"
-      />
+      <!-- 中间项目区域 -->
+      <div class="w-72 flex-shrink-0 flex flex-col overflow-hidden bg-white">
+        <ProjectManager
+          :current-customer="currentCustomer"
+          :projects="projects"
+          :current-project="currentProject"
+          :accounts="accounts"
+          @select-project="handleSelectProject"
+          @add-project="handleAddProject"
+          @edit-project="handleEditProject"
+          @delete-project="handleDeleteProject"
+        />
+      </div>
+
+      <!-- 右侧账号区域 -->
+      <div class="flex-1 flex flex-col overflow-hidden bg-apple-light-gray">
+        <AccountManager
+          :current-customer="currentCustomer"
+          :current-project="currentProject"
+          :accounts="accounts"
+          @add-account="handleAddAccount"
+          @edit-account="handleEditAccount"
+          @delete-account="handleDeleteAccount"
+        />
+      </div>
     </div>
   </div>
 </template>

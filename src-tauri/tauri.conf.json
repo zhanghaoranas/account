@@ -13,12 +13,18 @@
     "windows": [
       {
         "title": "开发账号管理",
-        "width": 800,
-        "height": 600
+        "width": 1100,
+        "height": 700,
+        "minWidth": 900,
+        "minHeight": 500,
+        "center": true,
+        "decorations": true,
+        "titleBarStyle": "Overlay",
+        "hiddenTitle": true
       }
     ],
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'"
     }
   },
   "bundle": {
