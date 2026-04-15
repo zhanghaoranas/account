@@ -155,197 +155,209 @@ function resetForm() {
 </script>
 
 <template>
-  <div class="flex flex-col h-full bg-white">
+  <div class="flex flex-col h-full">
     <!-- 标题栏 -->
-    <div class="flex justify-between items-center px-5 py-2.5 border-b border-[#e8e8e8] bg-gray-50 shadow-sm">
-      <h3 class="text-sm font-semibold text-gray-800">账号信息</h3>
+    <div class="flex justify-between items-center px-6 py-3">
+      <h3 class="text-xs font-semibold uppercase tracking-wider text-[rgba(0,0,0,0.4)] font-sf">账号信息</h3>
       <button
         @click="openAddDialog"
         :disabled="!currentCustomer || !currentProject"
-        class="ant-btn ant-btn-primary flex items-center gap-1 text-sm px-3 py-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+        class="apple-btn text-xs px-3 py-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
         </svg>
         添加账号
       </button>
     </div>
 
-    <!-- 账号表格 -->
-    <div class="flex-1 overflow-y-auto p-5">
-      <div v-if="currentProjectAccounts.length > 0" class="bg-white rounded-lg border border-[#e8e8e8] overflow-hidden shadow-sm">
-        <table class="w-full">
-          <thead class="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-[#e8e8e8]">
-            <tr>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">项目地址</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">租户</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">项目账号</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">项目密码</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">备注</th>
-              <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wide">操作</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-[#e8e8e8]">
-            <tr
-              v-for="(account, index) in currentProjectAccounts"
-              :key="index"
-              class="hover:bg-gradient-to-r hover:from-gray-50 hover:to-white transition-all duration-200"
+    <!-- 账号列表 -->
+    <div class="flex-1 overflow-y-auto px-6 pb-6">
+      <div v-if="currentProjectAccounts.length > 0" class="space-y-3">
+        <div
+          v-for="(account, index) in currentProjectAccounts"
+          :key="index"
+          class="bg-white rounded-apple p-5 transition-all duration-200 hover:shadow-apple-card"
+        >
+          <!-- URL 行 -->
+          <div class="flex items-start justify-between mb-4">
+            <div
+              @click="copyToClipboard(account.projectUrl, '项目地址')"
+              class="flex items-center gap-2 cursor-pointer group/url"
             >
-              <td class="px-4 py-3">
-                <div
-                  @click="copyToClipboard(account.projectUrl, '项目地址')"
-                  class="inline-flex items-center gap-2 text-sm text-gray-800 cursor-pointer hover:text-[#4096ff] transition-all duration-200 group/btn"
-                >
-                  <span class="truncate max-w-xs group-hover/btn:font-medium">{{ account.projectUrl }}</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 group-hover/btn:text-[#4096ff] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                  </svg>
-                </div>
-              </td>
-              <td class="px-4 py-3 text-sm text-gray-600">{{ account.tenant || '-' }}</td>
-              <td class="px-4 py-3">
-                <div
-                  @click="copyToClipboard(account.account, '项目账号')"
-                  class="inline-flex items-center gap-2 text-sm text-gray-800 cursor-pointer hover:text-[#4096ff] transition-all duration-200 group/btn"
-                >
-                  <span class="font-mono group-hover/btn:font-medium">{{ account.account }}</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 group-hover/btn:text-[#4096ff] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                  </svg>
-                </div>
-              </td>
-              <td class="px-4 py-3">
-                <div
-                  @click="copyToClipboard(account.password, '项目密码')"
-                  class="inline-flex items-center gap-2 text-sm text-gray-800 cursor-pointer hover:text-[#4096ff] transition-all duration-200 group/btn"
-                >
-                  <span class="font-mono group-hover/btn:font-medium">{{ account.password }}</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 group-hover/btn:text-[#4096ff] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                  </svg>
-                </div>
-              </td>
-              <td class="px-4 py-3 text-sm text-gray-600">{{ account.remark || '-' }}</td>
-              <td class="px-4 py-3 text-right">
-                <div class="flex justify-end gap-3">
-                  <button
-                    @click="openEditDialog(accounts.indexOf(account))"
-                    class="text-sm text-[#4096ff] hover:text-[#69b1ff] transition-all duration-200 hover:underline"
-                  >
-                    编辑
-                  </button>
-                  <button
-                    @click="handleDelete(accounts.indexOf(account))"
-                    class="text-sm text-[#f5222d] hover:text-[#ff4d4f] transition-all duration-200 hover:underline"
-                  >
-                    删除
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[rgba(0,0,0,0.3)] group-hover/url:text-apple-blue transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+              </svg>
+              <span class="text-sm text-apple-link group-hover/url:text-apple-bright-blue font-sf transition-colors truncate max-w-md">{{ account.projectUrl }}</span>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div class="flex gap-1 flex-shrink-0">
+              <button
+                @click="openEditDialog(accounts.indexOf(account))"
+                class="p-1.5 text-[rgba(0,0,0,0.3)] hover:text-apple-blue hover:bg-apple-blue/5 rounded-md transition-all duration-200"
+                title="编辑"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </button>
+              <button
+                @click="handleDelete(accounts.indexOf(account))"
+                class="p-1.5 text-[rgba(0,0,0,0.3)] hover:text-apple-danger hover:bg-apple-danger/5 rounded-md transition-all duration-200"
+                title="删除"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- 信息网格 -->
+          <div class="grid grid-cols-2 gap-x-6 gap-y-3">
+            <!-- 租户 -->
+            <div v-if="account.tenant">
+              <span class="text-xs text-[rgba(0,0,0,0.4)] font-sf block mb-1">租户</span>
+              <span class="text-sm text-apple-near-black font-sf">{{ account.tenant }}</span>
+            </div>
+
+            <!-- 账号 -->
+            <div>
+              <span class="text-xs text-[rgba(0,0,0,0.4)] font-sf block mb-1">账号</span>
+              <div
+                @click="copyToClipboard(account.account, '账号')"
+                class="flex items-center gap-1.5 cursor-pointer group/account"
+              >
+                <span class="text-sm text-apple-near-black font-sf font-mono">{{ account.account }}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-[rgba(0,0,0,0.2)] group-hover/account:text-apple-blue transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- 密码 -->
+            <div>
+              <span class="text-xs text-[rgba(0,0,0,0.4)] font-sf block mb-1">密码</span>
+              <div
+                @click="copyToClipboard(account.password, '密码')"
+                class="flex items-center gap-1.5 cursor-pointer group/password"
+              >
+                <span class="text-sm text-apple-near-black font-sf font-mono">{{ account.password }}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-[rgba(0,0,0,0.2)] group-hover/password:text-apple-blue transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- 备注 -->
+          <div v-if="account.remark" class="mt-3 pt-3 border-t border-black/[0.06]">
+            <span class="text-xs text-[rgba(0,0,0,0.4)] font-sf block mb-1">备注</span>
+            <span class="text-sm text-[rgba(0,0,0,0.8)] font-sf">{{ account.remark }}</span>
+          </div>
+        </div>
       </div>
 
       <!-- 空状态 -->
       <div v-else class="flex flex-col items-center justify-center h-full py-20">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 mb-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mb-4 text-black/10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
-        <p class="text-gray-500 text-sm mb-1">{{ currentCustomer && currentProject ? '暂无账号信息' : '请先选择客户和项目' }}</p>
-        <p v-if="currentCustomer && currentProject" class="text-gray-400 text-xs">点击右上角"添加账号"按钮开始添加</p>
+        <p class="text-sm text-[rgba(0,0,0,0.4)] font-sf mb-1">{{ currentCustomer && currentProject ? '暂无账号信息' : '请先选择客户和项目' }}</p>
+        <p v-if="currentCustomer && currentProject" class="text-xs text-[rgba(0,0,0,0.25)] font-sf">点击右上角"添加账号"按钮开始添加</p>
       </div>
     </div>
   </div>
 
-  <!-- 对话框 -->
-  <Transition name="ant-zoom">
+  <!-- 添加/编辑对话框 -->
+  <Transition name="apple-zoom">
     <div
       v-if="accountDialogVisible"
-      class="fixed inset-0 bg-black/45 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
+      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-md"
     >
-      <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg">
+      <div class="bg-white rounded-apple-lg shadow-apple-card w-full max-w-lg">
         <!-- 标题 -->
-        <div class="px-6 py-4 border-b border-[#e8e8e8]">
-          <h3 class="text-base font-semibold text-gray-800">
+        <div class="px-6 py-5">
+          <h3 class="text-base font-semibold text-apple-near-black font-sf-display tracking-tight">
             {{ isEditAccount ? '修改账号' : '新增账号' }}
           </h3>
         </div>
 
         <!-- 内容 -->
-        <div class="px-6 py-4 space-y-4">
+        <div class="px-6 pb-5 space-y-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              项目地址 <span class="text-[#f5222d]">*</span>
+            <label class="block text-sm font-medium text-apple-near-black/70 mb-2 font-sf">
+              项目地址 <span class="text-apple-danger">*</span>
             </label>
             <input
               v-model="accountForm.projectUrl"
               type="text"
               placeholder="https://example.com"
-              class="ant-input"
+              class="apple-input"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-apple-near-black/70 mb-2 font-sf">
               租户
             </label>
             <input
               v-model="accountForm.tenant"
               type="text"
               placeholder="可选"
-              class="ant-input"
+              class="apple-input"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              项目账号 <span class="text-[#f5222d]">*</span>
+            <label class="block text-sm font-medium text-apple-near-black/70 mb-2 font-sf">
+              项目账号 <span class="text-apple-danger">*</span>
             </label>
             <input
               v-model="accountForm.account"
               type="text"
               placeholder="请输入项目账号"
-              class="ant-input"
+              class="apple-input"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              项目密码 <span class="text-[#f5222d]">*</span>
+            <label class="block text-sm font-medium text-apple-near-black/70 mb-2 font-sf">
+              项目密码 <span class="text-apple-danger">*</span>
             </label>
             <input
               v-model="accountForm.password"
               type="password"
               placeholder="请输入项目密码"
-              class="ant-input"
+              class="apple-input"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-apple-near-black/70 mb-2 font-sf">
               备注
             </label>
             <textarea
               v-model="accountForm.remark"
               placeholder="可选的备注信息"
               rows="3"
-              class="ant-input resize-none"
+              class="apple-input resize-none"
             ></textarea>
           </div>
         </div>
 
         <!-- 底部按钮 -->
-        <div class="px-6 py-4 bg-gray-50 rounded-b-xl flex justify-end gap-2">
+        <div class="px-6 py-4 bg-apple-light-gray/60 rounded-b-apple-lg flex justify-end gap-2">
           <button
             @click="accountDialogVisible = false"
-            class="ant-btn ant-btn-default"
+            class="apple-btn-default"
           >
             取消
           </button>
           <button
             @click="handleSave"
-            class="ant-btn ant-btn-primary"
+            class="apple-btn"
           >
             确定
           </button>
@@ -355,28 +367,28 @@ function resetForm() {
   </Transition>
 
   <!-- 确认对话框 -->
-  <Transition name="ant-zoom">
+  <Transition name="apple-zoom">
     <div
       v-if="confirmDialog.show"
-      class="fixed inset-0 bg-black/45 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
+      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-md"
     >
-      <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
-        <div class="px-6 py-4 border-b border-[#e8e8e8]">
-          <h3 class="text-base font-semibold text-gray-800">{{ confirmDialog.title }}</h3>
+      <div class="bg-white rounded-apple-lg shadow-apple-card w-full max-w-md">
+        <div class="px-6 py-5">
+          <h3 class="text-base font-semibold text-apple-near-black font-sf-display tracking-tight">{{ confirmDialog.title }}</h3>
         </div>
-        <div class="px-6 py-4">
-          <p class="text-sm text-gray-600">{{ confirmDialog.message }}</p>
+        <div class="px-6 pb-5">
+          <p class="text-sm text-[rgba(0,0,0,0.8)] font-sf leading-relaxed">{{ confirmDialog.message }}</p>
         </div>
-        <div class="px-6 py-4 bg-gray-50 rounded-b-xl flex justify-end gap-2">
+        <div class="px-6 py-4 bg-apple-light-gray/60 rounded-b-apple-lg flex justify-end gap-2">
           <button
             @click="confirmDialog.show = false"
-            class="ant-btn ant-btn-default"
+            class="apple-btn-default"
           >
             取消
           </button>
           <button
             @click="confirmDialog.onConfirm"
-            class="ant-btn ant-btn-danger"
+            class="apple-btn-danger"
           >
             删除
           </button>
@@ -386,16 +398,15 @@ function resetForm() {
   </Transition>
 
   <!-- 消息提示 -->
-  <Transition name="ant-slide-up">
+  <Transition name="apple-slide-up">
     <div
       v-if="message.show"
-      class="fixed top-8 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded shadow-lg text-sm font-medium"
-      :class="{
-        'bg-[#f6ffed] border border-[#b7eb8f] text-[#52c41a]': message.type === 'success',
-        'bg-[#fffbe6] border border-[#ffe58f] text-[#faad14]': message.type === 'warning',
-        'bg-[#fff2f0] border border-[#ffccc7] text-[#f5222d]': message.type === 'error'
-      }"
+      class="fixed top-6 left-1/2 transform -translate-x-1/2 z-[100] px-5 py-2.5 rounded-apple text-sm font-medium font-sf backdrop-blur-xl shadow-apple-card bg-white/90"
+      :class="message.type === 'error' ? 'text-apple-danger' : 'text-apple-near-black'"
     >
+      <span v-if="message.type === 'success'" class="inline-block mr-1.5 text-green-500">&#10003;</span>
+      <span v-if="message.type === 'warning'" class="inline-block mr-1.5 text-amber-500">&#9888;</span>
+      <span v-if="message.type === 'error'" class="inline-block mr-1.5 text-apple-danger">&#10007;</span>
       {{ message.text }}
     </div>
   </Transition>

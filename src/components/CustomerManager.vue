@@ -99,15 +99,15 @@ function handleConfirmDelete() {
 </script>
 
 <template>
-  <div class="flex flex-col h-full bg-white">
+  <div class="flex flex-col h-full">
     <!-- 标题栏 -->
-    <div class="flex justify-between items-center px-4 py-2.5 border-b border-[#e8e8e8] bg-gray-50 shadow-sm">
-      <h3 class="text-sm font-semibold text-gray-800">客户</h3>
+    <div class="flex justify-between items-center px-5 py-3">
+      <h3 class="text-xs font-semibold uppercase tracking-wider text-white/40 font-sf">客户</h3>
       <button
         @click="openAddDialog"
-        class="ant-btn ant-btn-primary flex items-center gap-1 text-sm px-3 py-1.5"
+        class="apple-btn text-xs px-3 py-1.5"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
         </svg>
         新增
@@ -115,7 +115,7 @@ function handleConfirmDelete() {
     </div>
 
     <!-- 客户列表 -->
-    <div class="flex-1 overflow-y-auto p-3 space-y-2">
+    <div class="flex-1 overflow-y-auto px-2 pb-3 space-y-0.5">
       <ListItem
         v-for="customer in customers"
         :key="customer"
@@ -128,11 +128,11 @@ function handleConfirmDelete() {
       />
 
       <!-- 空状态 -->
-      <div v-if="customers.length === 0" class="flex flex-col items-center justify-center py-16">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mb-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div v-if="customers.length === 0" class="flex flex-col items-center justify-center py-20">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mb-3 text-white/15" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
         </svg>
-        <p class="text-sm text-gray-400">暂无客户</p>
+        <p class="text-xs text-white/30 font-sf">暂无客户</p>
       </div>
     </div>
   </div>

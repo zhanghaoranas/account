@@ -23,22 +23,21 @@ onMounted(() => {
     visible.value = false;
     setTimeout(() => {
       emit('close');
-    }, 300); // 等待动画结束
+    }, 300);
   }, props.duration);
 });
 </script>
 
 <template>
-  <Transition name="ant-slide-up">
+  <Transition name="apple-slide-up">
     <div
       v-if="visible"
-      class="fixed top-8 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded shadow-lg text-sm font-medium"
-      :class="{
-        'bg-[#f6ffed] border border-[#b7eb8f] text-[#52c41a]': type === 'success',
-        'bg-[#fffbe6] border border-[#ffe58f] text-[#faad14]': type === 'warning',
-        'bg-[#fff2f0] border border-[#ffccc7] text-[#f5222d]': type === 'error'
-      }"
+      class="fixed top-6 left-1/2 transform -translate-x-1/2 z-[100] px-5 py-2.5 rounded-apple text-sm font-medium font-sf backdrop-blur-xl"
+      :class="type === 'error' ? 'bg-white/90 text-apple-danger shadow-apple-card' : 'bg-white/90 text-apple-near-black shadow-apple-card'"
     >
+      <span v-if="type === 'success'" class="inline-block mr-1.5 text-green-500">&#10003;</span>
+      <span v-if="type === 'warning'" class="inline-block mr-1.5 text-amber-500">&#9888;</span>
+      <span v-if="type === 'error'" class="inline-block mr-1.5 text-apple-danger">&#10007;</span>
       {{ text }}
     </div>
   </Transition>

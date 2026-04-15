@@ -8,7 +8,10 @@
       "Bash(pnpm list:*)",
       "Bash(pnpm dev:*)",
       "Bash(npm run build:*)",
-      "mcp__zai-mcp-server__ui_to_artifact"
+      "mcp__zai-mcp-server__ui_to_artifact",
+      "mcp__zread__get_repo_structure",
+      "mcp__web-search-prime__webSearchPrime",
+      "mcp__web-reader__webReader"
     ]
   }
 }

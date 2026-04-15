@@ -168,9 +168,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex h-screen overflow-hidden bg-[#f5f5f5]">
+  <div class="flex h-screen overflow-hidden bg-apple-light-gray">
     <!-- 左侧客户区域 -->
-    <div class="w-72 flex-shrink-0 flex flex-col overflow-hidden border-r border-[#e8e8e8]">
+    <div class="w-72 flex-shrink-0 flex flex-col overflow-hidden bg-apple-near-black">
       <CustomerManager
         :customers="customers"
         :current-customer="currentCustomer"
@@ -183,7 +183,7 @@ onMounted(() => {
     </div>
 
     <!-- 中间项目区域 -->
-    <div class="w-72 flex-shrink-0 flex flex-col overflow-hidden border-r border-[#e8e8e8]">
+    <div class="w-72 flex-shrink-0 flex flex-col overflow-hidden bg-white">
       <ProjectManager
         :current-customer="currentCustomer"
         :projects="projects"
@@ -197,7 +197,7 @@ onMounted(() => {
     </div>
 
     <!-- 右侧账号区域 -->
-    <div class="flex-1 flex flex-col overflow-hidden">
+    <div class="flex-1 flex flex-col overflow-hidden bg-apple-light-gray">
       <AccountManager
         :current-customer="currentCustomer"
         :current-project="currentProject"

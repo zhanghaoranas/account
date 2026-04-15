@@ -36,28 +36,28 @@ function handleCancel() {
 </script>
 
 <template>
-  <Transition name="ant-zoom">
+  <Transition name="apple-zoom">
     <div
       v-if="localVisible"
-      class="fixed inset-0 bg-black/45 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
+      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-md"
     >
-      <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
-        <div class="px-6 py-4 border-b border-[#e8e8e8]">
-          <h3 class="text-base font-semibold text-gray-800">{{ title }}</h3>
+      <div class="bg-white rounded-apple-lg shadow-apple-card w-full max-w-md">
+        <div class="px-6 py-5">
+          <h3 class="text-base font-semibold text-apple-near-black font-sf-display tracking-tight">{{ title }}</h3>
         </div>
-        <div class="px-6 py-4">
-          <p class="text-sm text-gray-600">{{ message }}</p>
+        <div class="px-6 pb-5">
+          <p class="text-sm text-[rgba(0,0,0,0.8)] font-sf leading-relaxed">{{ message }}</p>
         </div>
-        <div class="px-6 py-4 bg-gray-50 rounded-b-xl flex justify-end gap-2">
+        <div class="px-6 py-4 bg-apple-light-gray/60 rounded-b-apple-lg flex justify-end gap-2">
           <button
             @click="handleCancel"
-            class="ant-btn ant-btn-default"
+            class="apple-btn-default"
           >
             {{ cancelText }}
           </button>
           <button
             @click="handleConfirm"
-            class="ant-btn ant-btn-danger"
+            class="apple-btn-danger"
           >
             {{ confirmText }}
           </button>
