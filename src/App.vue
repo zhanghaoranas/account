@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
 import { getCurrentWindow } from '@tauri-apps/api/window';
+import { save } from '@tauri-apps/plugin-dialog';
+import { writeTextFile } from '@tauri-apps/plugin-fs';
 import CustomerManager from './components/CustomerManager.vue';
 import ProjectManager from './components/ProjectManager.vue';
 import AccountManager from './components/AccountManager.vue';
+import DialogOverlay from './components/common/DialogOverlay.vue';
 import type { ProjectInfo } from './types';
-import { loadData, saveData } from './utils/storage';
+import { loadData, saveData, type StorageData } from './utils/storage';
 
 // 窗口拖拽
 async function handleTitleBarMouseDown(e: MouseEvent) {
@@ -167,6 +170,108 @@ function handleDeleteAccount(index: number) {
   accounts.value.splice(index, 1);
 }
 
+// 导入/导出
+const importMode = ref<'replace' | 'merge' | ''>('');
+const pendingImportData = ref<StorageData | null>(null);
+
+async function handleExport() {
+  const data: StorageData = {
+    customers: customers.value,
+    projects: projects.value,
+    accounts: accounts.value
+  };
+  const json = JSON.stringify(data, null, 2);
+  try {
+    const filePath = await save({
+      defaultPath: `account-data-${new Date().toISOString().slice(0, 10)}.json`,
+      filters: [{ name: 'JSON', extensions: ['json'] }]
+    });
+    if (filePath) {
+      await writeTextFile(filePath, json);
+    }
+  } catch {
+    // 用户取消或非 Tauri 环境
+  }
+}
+
+function triggerImport() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result as string) as StorageData;
+        if (!data.customers || !data.projects || !data.accounts) {
+          alert('无效的数据文件');
+          return;
+        }
+        pendingImportData.value = data;
+        // 有数据时让用户选择模式
+        if (customers.value.length > 0) {
+          importMode.value = '';
+        } else {
+          // 无数据直接替换
+          applyImport('replace');
+        }
+      } catch {
+        alert('文件解析失败，请确认是有效的 JSON 文件');
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+function applyImport(mode: 'replace' | 'merge') {
+  const imported = pendingImportData.value;
+  if (!imported) return;
+
+  if (mode === 'replace') {
+    customers.value = imported.customers;
+    projects.value = imported.projects;
+    accounts.value = imported.accounts;
+  } else {
+    // 合并：追加不存在的客户、项目，跳过重复账号
+    imported.customers.forEach(c => {
+      if (!customers.value.includes(c)) {
+        customers.value.push(c);
+      }
+    });
+    for (const [customer, projectList] of Object.entries(imported.projects)) {
+      if (!projects.value[customer]) {
+        projects.value[customer] = [...projectList];
+      } else {
+        projectList.forEach(p => {
+          if (!projects.value[customer].includes(p)) {
+            projects.value[customer].push(p);
+          }
+        });
+      }
+    }
+    imported.accounts.forEach(acc => {
+      const exists = accounts.value.some(
+        a => a.customerName === acc.customerName &&
+             a.projectName === acc.projectName &&
+             a.account === acc.account &&
+             a.projectUrl === acc.projectUrl
+      );
+      if (!exists) {
+        accounts.value.push(acc);
+      }
+    });
+  }
+
+  currentCustomer.value = customers.value[0] || '';
+  const firstProjects = projects.value[currentCustomer.value] || [];
+  currentProject.value = firstProjects[0] || '';
+  pendingImportData.value = null;
+  importMode.value = '';
+}
+
 // 初始化数据
 onMounted(() => {
   const data = loadData();
@@ -185,10 +290,31 @@ onMounted(() => {
     <!-- 自定义标题栏 -->
     <div
       data-tauri-drag-region
-      class="flex-shrink-0 h-[38px] bg-apple-near-black flex items-center justify-center select-none"
+      class="flex-shrink-0 h-[38px] bg-apple-near-black flex items-center justify-between px-4 select-none"
       @mousedown="handleTitleBarMouseDown"
     >
+      <div class="w-20"></div>
       <span data-tauri-drag-region class="text-white/40 text-xs font-sf tracking-wide">开发账号管理</span>
+      <div class="flex items-center gap-1 no-drag">
+        <button
+          @click="triggerImport"
+          class="p-1.5 text-white/30 hover:text-white/70 transition-colors rounded-md hover:bg-white/10"
+          title="导入"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          </svg>
+        </button>
+        <button
+          @click="handleExport"
+          class="p-1.5 text-white/30 hover:text-white/70 transition-colors rounded-md hover:bg-white/10"
+          title="导出"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+        </button>
+      </div>
     </div>
 
     <!-- 三栏内容 -->
@@ -232,5 +358,39 @@ onMounted(() => {
         />
       </div>
     </div>
+
+    <!-- 导入模式选择对话框 -->
+    <DialogOverlay :visible="!!pendingImportData && !importMode" @close="pendingImportData = null">
+      <div class="bg-white rounded-apple-lg shadow-apple-card w-full max-w-sm">
+        <div class="px-6 py-5">
+          <h3 class="text-base font-semibold text-apple-near-black font-sf-display tracking-tight">导入数据</h3>
+          <p class="text-sm text-[rgba(0,0,0,0.6)] font-sf mt-2">检测到当前已有数据，请选择导入方式：</p>
+        </div>
+        <div class="px-6 pb-4 space-y-2">
+          <button
+            @click="applyImport('replace')"
+            class="w-full text-left px-4 py-3 rounded-apple bg-apple-light-gray hover:bg-[#ebebed] transition-colors"
+          >
+            <div class="text-sm font-medium text-apple-near-black font-sf">替换全部</div>
+            <div class="text-xs text-[rgba(0,0,0,0.5)] font-sf mt-0.5">清除当前数据，使用导入的数据</div>
+          </button>
+          <button
+            @click="applyImport('merge')"
+            class="w-full text-left px-4 py-3 rounded-apple bg-apple-light-gray hover:bg-[#ebebed] transition-colors"
+          >
+            <div class="text-sm font-medium text-apple-near-black font-sf">合并数据</div>
+            <div class="text-xs text-[rgba(0,0,0,0.5)] font-sf mt-0.5">保留当前数据，追加不重复的项</div>
+          </button>
+        </div>
+        <div class="px-6 py-4 bg-apple-light-gray/60 rounded-b-apple-lg flex justify-end">
+          <button
+            @click="pendingImportData = null"
+            class="apple-btn-default text-xs"
+          >
+            取消
+          </button>
+        </div>
+      </div>
+    </DialogOverlay>
   </div>
 </template>

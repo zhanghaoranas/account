@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, defineProps, defineEmits } from 'vue';
 import type { ProjectInfo } from '../types';
+import DialogOverlay from './common/DialogOverlay.vue';
 
 // 定义 props
 const props = defineProps<{
@@ -271,131 +272,121 @@ function resetForm() {
   </div>
 
   <!-- 添加/编辑对话框 -->
-  <Transition name="apple-zoom">
-    <div
-      v-if="accountDialogVisible"
-      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-md"
-    >
-      <div class="bg-white rounded-apple-lg shadow-apple-card w-full max-w-lg">
-        <!-- 标题 -->
-        <div class="px-6 py-5">
-          <h3 class="text-base font-semibold text-apple-near-black font-sf-display tracking-tight">
-            {{ isEditAccount ? '修改账号' : '新增账号' }}
-          </h3>
+  <DialogOverlay :visible="accountDialogVisible" @close="accountDialogVisible = false">
+    <div class="bg-white rounded-apple-lg shadow-apple-card w-full max-w-lg">
+      <!-- 标题 -->
+      <div class="px-6 py-5">
+        <h3 class="text-base font-semibold text-apple-near-black font-sf-display tracking-tight">
+          {{ isEditAccount ? '修改账号' : '新增账号' }}
+        </h3>
+      </div>
+
+      <!-- 内容 -->
+      <div class="px-6 pb-5 space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-apple-near-black/70 mb-2 font-sf">
+            项目地址 <span class="text-apple-danger">*</span>
+          </label>
+          <input
+            v-model="accountForm.projectUrl"
+            type="text"
+            placeholder="https://example.com"
+            class="apple-input"
+          />
         </div>
 
-        <!-- 内容 -->
-        <div class="px-6 pb-5 space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-apple-near-black/70 mb-2 font-sf">
-              项目地址 <span class="text-apple-danger">*</span>
-            </label>
-            <input
-              v-model="accountForm.projectUrl"
-              type="text"
-              placeholder="https://example.com"
-              class="apple-input"
-            />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-apple-near-black/70 mb-2 font-sf">
-              租户
-            </label>
-            <input
-              v-model="accountForm.tenant"
-              type="text"
-              placeholder="可选"
-              class="apple-input"
-            />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-apple-near-black/70 mb-2 font-sf">
-              项目账号 <span class="text-apple-danger">*</span>
-            </label>
-            <input
-              v-model="accountForm.account"
-              type="text"
-              placeholder="请输入项目账号"
-              class="apple-input"
-            />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-apple-near-black/70 mb-2 font-sf">
-              项目密码 <span class="text-apple-danger">*</span>
-            </label>
-            <input
-              v-model="accountForm.password"
-              type="password"
-              placeholder="请输入项目密码"
-              class="apple-input"
-            />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-apple-near-black/70 mb-2 font-sf">
-              备注
-            </label>
-            <textarea
-              v-model="accountForm.remark"
-              placeholder="可选的备注信息"
-              rows="3"
-              class="apple-input resize-none"
-            ></textarea>
-          </div>
+        <div>
+          <label class="block text-sm font-medium text-apple-near-black/70 mb-2 font-sf">
+            租户
+          </label>
+          <input
+            v-model="accountForm.tenant"
+            type="text"
+            placeholder="可选"
+            class="apple-input"
+          />
         </div>
 
-        <!-- 底部按钮 -->
-        <div class="px-6 py-4 bg-apple-light-gray/60 rounded-b-apple-lg flex justify-end gap-2">
-          <button
-            @click="accountDialogVisible = false"
-            class="apple-btn-default"
-          >
-            取消
-          </button>
-          <button
-            @click="handleSave"
-            class="apple-btn"
-          >
-            确定
-          </button>
+        <div>
+          <label class="block text-sm font-medium text-apple-near-black/70 mb-2 font-sf">
+            项目账号 <span class="text-apple-danger">*</span>
+          </label>
+          <input
+            v-model="accountForm.account"
+            type="text"
+            placeholder="请输入项目账号"
+            class="apple-input"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-apple-near-black/70 mb-2 font-sf">
+            项目密码 <span class="text-apple-danger">*</span>
+          </label>
+          <input
+            v-model="accountForm.password"
+            type="text"
+            placeholder="请输入项目密码"
+            class="apple-input"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-apple-near-black/70 mb-2 font-sf">
+            备注
+          </label>
+          <textarea
+            v-model="accountForm.remark"
+            placeholder="可选的备注信息"
+            rows="3"
+            class="apple-input resize-none"
+          ></textarea>
         </div>
       </div>
+
+      <!-- 底部按钮 -->
+      <div class="px-6 py-4 bg-apple-light-gray/60 rounded-b-apple-lg flex justify-end gap-2">
+        <button
+          @click="accountDialogVisible = false"
+          class="apple-btn-default"
+        >
+          取消
+        </button>
+        <button
+          @click="handleSave"
+          class="apple-btn"
+        >
+          确定
+        </button>
+      </div>
     </div>
-  </Transition>
+  </DialogOverlay>
 
   <!-- 确认对话框 -->
-  <Transition name="apple-zoom">
-    <div
-      v-if="confirmDialog.show"
-      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-md"
-    >
-      <div class="bg-white rounded-apple-lg shadow-apple-card w-full max-w-md">
-        <div class="px-6 py-5">
-          <h3 class="text-base font-semibold text-apple-near-black font-sf-display tracking-tight">{{ confirmDialog.title }}</h3>
-        </div>
-        <div class="px-6 pb-5">
-          <p class="text-sm text-[rgba(0,0,0,0.8)] font-sf leading-relaxed">{{ confirmDialog.message }}</p>
-        </div>
-        <div class="px-6 py-4 bg-apple-light-gray/60 rounded-b-apple-lg flex justify-end gap-2">
-          <button
-            @click="confirmDialog.show = false"
-            class="apple-btn-default"
-          >
-            取消
-          </button>
-          <button
-            @click="confirmDialog.onConfirm"
-            class="apple-btn-danger"
-          >
-            删除
-          </button>
-        </div>
+  <DialogOverlay :visible="confirmDialog.show" @close="confirmDialog.show = false">
+    <div class="bg-white rounded-apple-lg shadow-apple-card w-full max-w-md">
+      <div class="px-6 py-5">
+        <h3 class="text-base font-semibold text-apple-near-black font-sf-display tracking-tight">{{ confirmDialog.title }}</h3>
+      </div>
+      <div class="px-6 pb-5">
+        <p class="text-sm text-[rgba(0,0,0,0.8)] font-sf leading-relaxed">{{ confirmDialog.message }}</p>
+      </div>
+      <div class="px-6 py-4 bg-apple-light-gray/60 rounded-b-apple-lg flex justify-end gap-2">
+        <button
+          @click="confirmDialog.show = false"
+          class="apple-btn-default"
+        >
+          取消
+        </button>
+        <button
+          @click="confirmDialog.onConfirm"
+          class="apple-btn-danger"
+        >
+          删除
+        </button>
       </div>
     </div>
-  </Transition>
+  </DialogOverlay>
 
   <!-- 消息提示 -->
   <Transition name="apple-slide-up">
